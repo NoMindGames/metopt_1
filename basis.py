@@ -1,6 +1,5 @@
 import numpy as np
 import numpy.linalg
-import itertools
 from scipy.linalg import solve
 
 
@@ -139,16 +138,16 @@ for i in range(0, 5, 1):
 
                         dK = constr_dK(y_new, c, i, j, k, z, A1, A)
                         Lk = make_Lk(2, i, j, k, z)
-                        while check_dk(dK) == 0:
-                            A_j = np.array(
-                                [
-                                    A[0][search_dk(dK)],
-                                    A[1][search_dk(dK)],
-                                    A[2][search_dk(dK)],
-                                    A[3][search_dk(dK)]
-                                ]
-                            )
-                            uk = np.linalg.inv(A1).dot(A_j)
+                        #while check_dk(dK) == 0:
+                         #   A_j = np.array(
+                          #      [
+                           #         A[0][search_dk(dK)],
+                            #        A[1][search_dk(dK)],
+                             #       A[2][search_dk(dK)],
+                              #      A[3][search_dk(dK)]
+                               # ]
+                            #)
+                            #uk = np.linalg.inv(A1).dot(A_j)
                             #print("\nuk = ")
                             #print(uk)
                         if check_dk(dK) == 1:
