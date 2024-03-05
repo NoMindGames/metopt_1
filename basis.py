@@ -4,7 +4,6 @@ import itertools
 from scipy.linalg import solve
 
 
-
 def basis(A_t):
     b = np.array([20, 50, 90, 1000]).reshape((4, 1))
     try:
@@ -23,12 +22,12 @@ def add_zero(y_old, a, b, c, d):
     return y_t
 
 
-def constr_dK(y_t, c_t, a, b, c, d, A1_t):
+def constr_dK(y_t, c_t, a, b, c, d, A1_t, A_t):
     Nk = np.array([a + 1, b + 1, c + 1, d + 1]).reshape((4, 1))
     print(Nk)
     print("\n")
     k = 0
-    Lk = np.array([0.0, 0.0]).reshape((2, 1))
+    Lk = np.array([0, 0]).reshape((2, 1))
     for count in range(0, 6, 1):
         if count != a and count != b and count != c and count != d:
             Lk[k] = count + 1
@@ -38,12 +37,43 @@ def constr_dK(y_t, c_t, a, b, c, d, A1_t):
     k1 = 0
     c_t_Nk = np.array([0.0, 0.0, 0.0, 0.0]).reshape((4, 1))
     for cou_c in Nk:
-        c_t_Nk[k1] = c_t[cou_c-1]
+        c_t_Nk[k1] = c_t[cou_c - 1]
         k1 += 1
     y_d = B_t.dot(c_t_Nk)
     print("\n" + "y_d =")
     print(y_d)
+    A_Lk = np.array(
+        [
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 0.0]
+        ]
+    )
+    for cou_A_m in range(0, 4, 1):
+        k_A = 0
+        for cou_A in Lk:
+            A_Lk[cou_A_m, k_A] = A[cou_A_m, cou_A - 1]
+            k_A += 1
+    print("\n" + "A_Lk =")
+    print(A_Lk)
+    k_c_Lk = 0
+    c_t_Lk = np.array([0.0, 0.0]).reshape((2, 1))
+    for cou_c_Lk in Lk:
+        c_t_Lk[k_c_Lk] = c_t[cou_c_Lk - 1]
+        k_c_Lk += 1
+    print("\n" + "c_Nk =")
+    print(c_t_Nk)
+    print("\n" + "c_Lk =")
+    print(c_t_Lk)
+    prom = B_t.dot(A_Lk)
+    dk = c_t_Lk - np.dot(c_t_Nk.T, prom)
+    print("\n" + "dk = ")
+    print(dk)
+    return dk
 
+
+def check_dk(dk, )
 
 A = np.array(
     [
@@ -87,4 +117,6 @@ for i in range(0, 5, 1):
                         print(y_new)
                         print("\n")
 
-                        constr_dK(y_new, c, i, j, k, z, A1)
+                        dK = constr_dK(y_new, c, i, j, k, z, A1, A)
+
+
