@@ -22,18 +22,26 @@ def add_zero(y_old, a, b, c, d):
     return y_t
 
 
-def constr_dK(y_t, c_t, a, b, c, d, A1_t, A_t):
-    Nk = np.array([a + 1, b + 1, c + 1, d + 1]).reshape((4, 1))
-    print(Nk)
-    print("\n")
+def make_Lk(n, a, b, c, d):
     k = 0
     Lk = np.array([0, 0]).reshape((2, 1))
     for count in range(0, 6, 1):
         if count != a and count != b and count != c and count != d:
             Lk[k] = count + 1
             k += 1
+    print("Lk = ")
     print(Lk)
+    return Lk
+
+
+def constr_dK(y_t, c_t, a, b, c, d, A1_t, A_t):
+    Nk = np.array([a + 1, b + 1, c + 1, d + 1]).reshape((4, 1))
+    print(Nk)
+    print("\n")
+    Lk = make_Lk(2, a, b, c, d)
     B_t = np.linalg.inv(A1_t)
+    print("\n" + "B =")
+    print(B_t)
     k1 = 0
     c_t_Nk = np.array([0.0, 0.0, 0.0, 0.0]).reshape((4, 1))
     for cou_c in Nk:
@@ -53,7 +61,7 @@ def constr_dK(y_t, c_t, a, b, c, d, A1_t, A_t):
     for cou_A_m in range(0, 4, 1):
         k_A = 0
         for cou_A in Lk:
-            A_Lk[cou_A_m, k_A] = A[cou_A_m, cou_A - 1]
+            A_Lk[cou_A_m, k_A] = A_t[cou_A_m, cou_A - 1]
             k_A += 1
     print("\n" + "A_Lk =")
     print(A_Lk)
@@ -67,13 +75,25 @@ def constr_dK(y_t, c_t, a, b, c, d, A1_t, A_t):
     print("\n" + "c_Lk =")
     print(c_t_Lk)
     prom = B_t.dot(A_Lk)
-    dk = c_t_Lk - np.dot(c_t_Nk.T, prom)
+    dk = c_t_Lk.T - np.dot(c_t_Nk.T, prom)
     print("\n" + "dk = ")
     print(dk)
     return dk
 
 
-def check_dk(dk, )
+def check_dk(dk):
+    for cou in range(0, 2, 1):
+        if dk[0][cou] < 0:
+            return 0
+        else:
+            return 1
+
+
+def search_dk(dk):
+    for cou in range(0, 2, 1):
+        if dk[0][cou] < 0:
+            return cou
+
 
 A = np.array(
     [
@@ -118,5 +138,24 @@ for i in range(0, 5, 1):
                         print("\n")
 
                         dK = constr_dK(y_new, c, i, j, k, z, A1, A)
-
-
+                        Lk = make_Lk(2, i, j, k, z)
+                        while check_dk(dK) == 0:
+                            A_j = np.array(
+                                [
+                                    A[0][search_dk(dK)],
+                                    A[1][search_dk(dK)],
+                                    A[2][search_dk(dK)],
+                                    A[3][search_dk(dK)]
+                                ]
+                            )
+                            uk = np.linalg.inv(A1).dot(A_j)
+                            #print("\nuk = ")
+                            #print(uk)
+                        if check_dk(dK) == 1:
+                            print("Оптимальное решение: " + "\n")
+                            print(y_new)
+                            z = 6
+                            k = 5
+                            j = 5
+                            i = 5
+                            break
